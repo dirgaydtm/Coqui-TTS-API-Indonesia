@@ -4,26 +4,19 @@ import os
 
 app = Flask(__name__)
 
-model_name = "tts_models/id/glow-tts"
-tts = TTS(model_name)
+tts = TTS("tts_models/id/glow-tts")
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
-    return jsonify({
-        "message": "Coqui TTS API is running",
-    })
+    return jsonify({"message": "Coqui TTS API is running"})
 
 @app.route("/tts", methods=["POST"])
 def tts_api():
     text = request.form.get("text")
-
     if not text:
         return jsonify({"error": "No text provided"}), 400
-
     output_path = "output.wav"
-
     tts.tts_to_file(text=text, file_path=output_path)
-
     return send_file(output_path, mimetype="audio/wav")
 
 if __name__ == "__main__":

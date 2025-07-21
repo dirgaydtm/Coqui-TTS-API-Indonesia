@@ -1,35 +1,55 @@
-# Coqui TTS API (Bahasa Indonesia)
+# Coqui TTS API (Indonesian Language)
 
-API sederhana untuk Text-to-Speech (TTS) Bahasa Indonesia menggunakan Coqui TTS dan Flask.
+Simple API for Indonesian Text-to-Speech (TTS) using Coqui TTS (`tts_models/id/glow-tts`) and Flask.
 
-## Fitur
+## Features
 
-- Endpoint `/` untuk cek status API
-- Endpoint `/tts` untuk mengubah teks menjadi audio (WAV)
+- `/` endpoint for API status check
+- `/tts` endpoint to convert text to audio (WAV)
+- Uses Indonesian TTS model from Coqui TTS
 
-## Instalasi
+## Installation
 
-1. **Clone repository**
+1. **Clone the repository**
    ```bash
    git clone <repo-url>
    cd coqui
    ```
-2. **Install dependencies**
+2. **Install Python dependencies**
    ```bash
-   pip install -r requirement.txt
+   pip install -r requirements.txt
    ```
+3. **Make sure ffmpeg and git are installed**
+   - For Docker users, these dependencies are installed automatically.
 
-## Cara Menjalankan
+## How to Run
+
+### Development Mode
 
 ```bash
 python app.py
 ```
 
-API akan berjalan di `http://localhost:5000` (atau port lain sesuai environment variable `PORT`).
+The API will run at `http://localhost:5000` (or another port according to the `PORT` environment variable).
 
-## Penggunaan API
+### Production Mode (recommended)
 
-### 1. Cek Status
+Run with Gunicorn:
+
+```bash
+gunicorn app:app --bind 0.0.0.0:5000
+```
+
+Or use Docker:
+
+```bash
+docker build -t coqui-tts-api .
+docker run -p 5000:5000 coqui-tts-api
+```
+
+## API Usage
+
+### 1. Status Check
 
 - **Endpoint:** `GET /`
 - **Response:**
@@ -41,20 +61,27 @@ API akan berjalan di `http://localhost:5000` (atau port lain sesuai environment 
 
 - **Endpoint:** `POST /tts`
 - **Form Data:**
-  - `text`: Teks yang ingin diubah menjadi suara
+  - `text`: Text to be converted to speech
 - **Response:**
-  - File audio WAV hasil konversi
+  - WAV audio file of the conversion result
 
-#### Contoh dengan `curl`:
+#### Example using `curl`:
 
 ```bash
-curl -X POST -F "text=Halo, apa kabar?" http://localhost:5000/tts --output output.wav
+curl -X POST -F "text=Hello, how are you?" http://localhost:5000/tts --output output.wav
 ```
 
 ## Deployment
 
-Untuk deployment (misal di Heroku), pastikan file `Procfile` sudah ada:
+For deployment (e.g., on Heroku), make sure the `Procfile` exists:
 
 ```
-web: python app.py
+web: gunicorn app:app --bind 0.0.0.0:$PORT
 ```
+
+---
+
+**Notes:**
+
+- The API port can be changed using the `PORT` environment variable.
+- Make sure your server has enough resources to run the TTS model.
